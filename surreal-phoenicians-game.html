@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surreal Phoenicians</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:wght@400;600&display=swap');
+        
+        :root {
+            --primary-gold: #d4af37;
+            --dark-gold: #b8941f;
+            --deep-blue: #1e3a8a;
+            --ocean-blue: #3b82f6;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--deep-blue) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: var(--primary-gold);
+            font-family: 'Cinzel', serif;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-gold);
+            padding-bottom: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: var(--text-light);
+            font-weight: bold;
+        }
+
+        .center-panel {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .city-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .city-name {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--primary-gold);
+            margin-bottom: 10px;
+        }
+
+        .city-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+
+        .victory-banner {
+            background: linear-gradient(135deg, var(--success), var(--primary-gold));
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .market-section {
+            margin: 30px 0;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .good-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .good-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .good-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-gold), var(--ocean-blue));
+        }
+
+        .good-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .good-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .good-stock {
+            background: var(--ocean-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .price-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .price-item {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .price-buy {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .price-sell {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .price-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .price-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .surreal-price {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .omega-part {
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        .real-part {
+            color: var(--primary-gold);
+            font-weight: bold;
+        }
+
+        .epsilon-part {
+            color: var(--ocean-blue);
+            font-size: 0.9rem;
+        }
+
+        .good-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 0.95rem;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-gold), var(--dark-gold));
+            color: var(--dark-bg);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--ocean-blue), var(--deep-blue));
+            color: white;
+        }
+
+        .btn:disabled {
+            background: #374151;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .actions-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 15px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--primary-gold);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-gold);
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--primary-gold);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-gold);
+            background: transparent;
+            color: var(--primary-gold);
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+        }
+
+        .quantity-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-gold);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .routes-grid {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .route-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .route-card:hover {
+            border-color: var(--primary-gold);
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .route-destination {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--primary-gold);
+        }
+
+        .route-info {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-restricted {
+            background: var(--danger);
+            color: white;
+        }
+
+        .status-low-stock {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-well-stocked {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-high-spread {
+            background: var(--purple);
+            color: white;
+        }
+
+        .cargo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .cargo-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .cargo-good {
+            font-weight: bold;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .cargo-quantity {
+            color: var(--primary-gold);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .victory-screen {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, var(--success), var(--primary-gold));
+            border-radius: 20px;
+            color: white;
+            margin: 20px 0;
+        }
+
+        .victory-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .news-ticker {
+            background: linear-gradient(90deg, var(--deep-blue), var(--ocean-blue));
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .event-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 350px;
+            z-index: 999;
+            animation: slideInRight 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .city-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header class="header">
+            <h1 class="title">🌊 Surreal Phoenicians 🌊</h1>
+            <p class="subtitle">Trade across the ancient Mediterranean with surreal mathematics</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Sidebar: Player Stats -->
+            <div class="sidebar">
+                <h3>💰 Trader Status</h3>
+                <div id="player-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">💰 Funds</span>
+                        <span class="stat-value" id="player-money">1240 - 1ε</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">📅 Day</span>
+                        <span class="stat-value" id="current-day">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🚢 Cargo</span>
+                        <span class="stat-value" id="cargo-capacity">0/50</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">⭐ Reputation</span>
+                        <span class="stat-value" id="reputation">Guild: 5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: Main Game Content -->
+            <div class="center-panel">
+                <div id="main-content">
+                    <!-- City view will be populated here -->
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Quick Actions & Info -->
+            <div class="sidebar">
+                <h3>⚡ Quick Actions</h3>
+                <div id="quick-actions">
+                    <button class="btn btn-primary" onclick="showTravel()">🛥️ Travel</button>
+                    <button class="btn btn-secondary" onclick="showCargo()">📦 Cargo</button>
+                    <button class="btn btn-secondary" onclick="showStats()">📊 Statistics</button>
+                    <button class="btn btn-danger" onclick="quitGame()">❌ Quit</button>
+                </div>
+                
+                <h3 style="margin-top: 30px;">📰 Market News</h3>
+                <div id="news-feed">
+                    <div class="news-ticker">
+                        📈 Supply caravans arrive every 14 days
+                    </div>
+                    <div class="news-ticker">
+                        🏺 Cities specialize in different goods
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="trade-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="trade-modal-title">Trade</h2>
+                <button class="close-btn" onclick="closeModal('trade-modal')">&times;</button>
+            </div>
+            <div id="trade-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="travel-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⛵ Choose Destination</h2>
+                <button class="close-btn" onclick="closeModal('travel-modal')">&times;</button>
+            </div>
+            <div id="travel-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="cargo-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📦 Cargo Hold</h2>
+                <button class="close-btn" onclick="closeModal('cargo-modal')">&times;</button>
+            </div>
+            <div id="cargo-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📊 Trading Statistics</h2>
+                <button class="close-btn" onclick="closeModal('stats-modal')">&times;</button>
+            </div>
+            <div id="stats-modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game State Management
+        class SurrealNumber {
+            constructor(a = 0, b = 0, c = 0) {
+                this.a = parseFloat(a);
+                this.b = parseFloat(b);
+                this.c = parseFloat(c);
+            }
+
+            toString() {
+                let parts = [];
+                if (this.c !== 0) {
+                    parts.push(`${this.c}ω`);
+                }
+                if (this.a !== 0 || parts.length === 0) {
+                    parts.push(`${this.a}`);
+                }
+                if (this.b !== 0) {
+                    parts.push(`${this.b > 0 ? '+' : ''}${this.b}ε`);
+                }
+                return parts.join(' ');
+            }
+
+            toHTML() {
+                let html = '';
+                if (this.c !== 0) {
+                    html += `<span class="omega-part">${this.c}ω</span>`;
+                }
+                if (this.a !== 0 || (!this.c && !this.b)) {
+                    if (html) html += ' ';
+                    html += `<span class="real-part">${this.a}</span>`;
+                }
+                if (this.b !== 0) {
+                    if (html) html += ' ';
+                    html += `<span class="epsilon-part">${this.b > 0 ? '+' : ''}${this.b}ε</span>`;
+                }
+                return html;
+            }
+
+            add(other) {
+                if (typeof other === 'number') {
+                    return new SurrealNumber(this.a + other, this.b, this.c);
+                }
+                return new SurrealNumber(this.a + other.a, this.b + other.b, this.c + other.c);
+            }
+
+            subtract(other) {
+                if (typeof other === 'number') {
+                    return new SurrealNumber(this.a - other, this.b, this.c);
+                }
+                return new SurrealNumber(this.a - other.a, this.b - other.b, this.c - other.c);
+            }
+
+            multiply(scalar) {
+                return new SurrealNumber(this.a * scalar, this.b * scalar, this.c * scalar);
+            }
+
+            lessThan(other) {
+                if (typeof other === 'number') {
+                    other = new SurrealNumber(other);
+                }
+                if (this.c !== other.c) return this.c < other.c;
+                if (Math.abs(this.a - other.a) > 1e-10) return this.a < other.a;
+                return this.b < other.b;
+            }
+
+            greaterThanOrEqual(other) {
+                return !this.lessThan(other);
+            }
+
+            isLegal() {
+                return this.c <= 0;
+            }
+
+            clearOmega() {
+                return new SurrealNumber(this.a, this.b, 0);
+            }
+        }
+
+        // Game data
+        const gameState = {
+            currentCity: 'carthage',
+            day: 1,
+            money: new SurrealNumber(1240, -1, 0),
+            cargo: {},
+            reputation: { merchant_guild: 5 },
+            gameCompleted: false,
+            ownsHouse: false,
+            lastSupplyRefreshDay: 1,
+            stats: {
+                totalTrades: 0,
+                goodsBought: {},
+                goodsSold: {},
+                totalSpent: new SurrealNumber(),
+                totalEarned: new SurrealNumber(),
+                citiesVisited: new Set(['carthage']),
+                routesTraveled: 0,
+                eventsEncountered: 0,
+                supplyRefreshes: 0
+            }
+        };
+
+        const goods = {
+            purple_dye: { id: 'purple_dye', name: 'Purple Dye', baseA: 220, baseB: -3, monopoly: true },
+            glass: { id: 'glass', name: 'Glass', baseA: 120, baseB: 0, monopoly: false },
+            olive_oil: { id: 'olive_oil', name: 'Olive Oil', baseA: 40, baseB: -1, monopoly: false, perishable: true },
+            cedar: { id: 'cedar', name: 'Cedar Timber', baseA: 90, baseB: -1, monopoly: false },
+            wine: { id: 'wine', name: 'Wine', baseA: 36, baseB: 0, monopoly: false, fragile: true, perishable: true },
+            salt: { id: 'salt', name: 'Salt', baseA: 18, baseB: 1, monopoly: false },
+            tin: { id: 'tin', name: 'Tin', baseA: 130, baseB: 1, monopoly: false },
+            silver: { id: 'silver', name: 'Silver', baseA: 240, baseB: 2, monopoly: false }
+        };
+
+        const cities = {
+            carthage: {
+                id: 'carthage',
+                name: 'Carthage',
+                region: 'N. Africa',
+                stock: { glass: 18, olive_oil: 25, wine: 12, salt: 30 },
+                modifiers: {
+                    glass: { aMod: -8, bMod: -1, cMod: 0 },
+                    olive_oil: { aMod: 4, bMod: 0, cMod: 0 },
+                    wine: { aMod: 2, bMod: 0, cMod: 0 }
+                }
+            },
+            tyre: {
+                id: 'tyre',
+                name: 'Tyre',
+                region: 'Levant',
+                stock: { purple_dye: 5, glass: 15, cedar: 8 },
+                modifiers: {
+                    purple_dye: { aMod: -40, bMod: -2, cMod: 0 },
+                    glass: { aMod: -20, bMod: -1, cMod: 0 },
+                    cedar: { aMod: -30, bMod: -1, cMod: 0 }
+                }
+            },
+            gadir: {
+                id: 'gadir',
+                name: 'Gadir',
+                region: 'Iberia',
+                stock: { silver: 6, tin: 12, salt: 20 },
+                modifiers: {
+                    purple_dye: { aMod: 0, bMod: 0, cMod: 1 },
+                    silver: { aMod: -30, bMod: 1, cMod: 0 },
+                    tin: { aMod: -20, bMod: 0, cMod: 0 }
+                }
+            }
+        };
+
+        const baseStockLevels = {
+            carthage: { glass: 18, olive_oil: 25, wine: 12, salt: 30 },
+            tyre: { purple_dye: 5, glass: 15, cedar: 8 },
+            gadir: { silver: 6, tin: 12, salt: 20 }
+        };
+
+        const routes = [
+            { from: 'carthage', to: 'gadir', minDays: 7, maxDays: 10, baseRisk: 0.18 },
+            { from: 'carthage', to: 'tyre', minDays: 12, maxDays: 16, baseRisk: 0.15 },
+            { from: 'tyre', to: 'gadir', minDays: 18, maxDays: 28, baseRisk: 0.22 },
+            { from: 'gadir', to: 'carthage', minDays: 8, maxDays: 11, baseRisk: 0.16 },
+            { from: 'tyre', to: 'carthage', minDays: 11, maxDays: 15, baseRisk: 0.12 },
+            { from: 'gadir', to: 'tyre', minDays: 20, maxDays: 30, baseRisk: 0.25 }
+        ];
+
+        // Game Logic Functions
+        function getPrice(goodId, cityId, isBuying) {
+            const good = goods[goodId];
+            const city = cities[cityId];
+            
+            let price = new SurrealNumber(good.baseA, good.baseB, good.monopoly ? 1 : 0);
+            
+            if (city.modifiers[goodId]) {
+                const mod = city.modifiers[goodId];
+                price.a += mod.aMod;
+                price.b += mod.bMod;
+                price.c = good.monopoly ? mod.cMod : 0;
+            }
+            
+            const stock = city.stock[goodId] || 0;
+            const playerCargo = gameState.cargo[goodId] || 0;
+            
+            const baseSpread = 0.15;
+            const stockFactor = Math.max(0.5, Math.min(2.0, stock / 10));
+            const inventoryPressure = 1.0 + (playerCargo * 0.02);
+            const isSpecialty = city.modifiers[goodId] && city.modifiers[goodId].aMod < 0;
+            const specialtyBonus = isSpecialty ? 0.05 : 0;
+            
+            if (isBuying) {
+                const spreadMultiplier = 1.0 + baseSpread + (1.0 / stockFactor - 1.0) * 0.1;
+                price.a *= spreadMultiplier;
+                if (isSpecialty) {
+                    price.a *= 1.02;
+                    price.b += 0.5;
+                }
+            } else {
+                let spreadMultiplier = 1.0 - baseSpread - specialtyBonus;
+                spreadMultiplier -= (stockFactor - 1.0) * 0.05;
+                spreadMultiplier /= inventoryPressure;
+                price.a *= Math.max(0.7, spreadMultiplier);
+                if (isSpecialty) {
+                    price.b -= 0.3;
+                }
+            }
+            
+            const repBonus = gameState.reputation.merchant_guild * -0.15;
+            price.b += repBonus;
+            
+            return price;
+        }
+
+        function canAfford(price) {
+            return price.isLegal() && gameState.money.greaterThanOrEqual(price);
+        }
+
+        function executeTrade(goodId, quantity, isBuying) {
+            const cityId = gameState.currentCity;
+            const city = cities[cityId];
+            const unitPrice = getPrice(goodId, cityId, isBuying);
+            const totalPrice = unitPrice.multiply(quantity);
+            
+            if (!canAfford(totalPrice) && isBuying) {
+                showEvent('❌ Cannot afford this trade!');
+                return false;
+            }
+            
+            if (!unitPrice.isLegal()) {
+                showEvent('❌ This good is restricted - requires permit!');
+                return false;
+            }
+            
+            if (isBuying) {
+                if ((city.stock[goodId] || 0) < quantity) {
+                    showEvent('❌ Not enough stock available!');
+                    return false;
+                }
+                
+                gameState.money = gameState.money.subtract(totalPrice);
+                gameState.cargo[goodId] = (gameState.cargo[goodId] || 0) + quantity;
+                city.stock[goodId] -= quantity;
+                
+                gameState.stats.totalTrades++;
+                gameState.stats.goodsBought[goodId] = (gameState.stats.goodsBought[goodId] || 0) + quantity;
+                gameState.stats.totalSpent = gameState.stats.totalSpent.add(totalPrice);
+                
+                showEvent(`✅ Purchased ${quantity}x ${goods[goodId].name} for ${totalPrice.toString()}`);
+            } else {
+                if ((gameState.cargo[goodId] || 0) < quantity) {
+                    showEvent('❌ You don\'t have enough of this good!');
+                    return false;
+                }
+                
+                gameState.money = gameState.money.add(totalPrice);
+                gameState.cargo[goodId] -= quantity;
+                if (gameState.cargo[goodId] === 0) {
+                    delete gameState.cargo[goodId];
+                }
+                city.stock[goodId] = (city.stock[goodId] || 0) + quantity;
+                
+                gameState.stats.totalTrades++;
+                gameState.stats.goodsSold[goodId] = (gameState.stats.goodsSold[goodId] || 0) + quantity;
+                gameState.stats.totalEarned = gameState.stats.totalEarned.add(totalPrice);
+                
+                showEvent(`✅ Sold ${quantity}x ${goods[goodId].name} for ${totalPrice.toString()}`);
+            }
+            
+            updateDisplay();
+            return true;
+        }
+
+        function travel(destinationId) {
+            const route = routes.find(r => r.from === gameState.currentCity && r.to === destinationId);
+            if (!route) return false;
+            
+            const travelTime = Math.floor(Math.random() * (route.maxDays - route.minDays + 1)) + route.minDays;
+            gameState.day += travelTime;
+            gameState.currentCity = destinationId;
+            
+            gameState.stats.citiesVisited.add(destinationId);
+            gameState.stats.routesTraveled++;
+            
+            checkSupplyRefresh();
+            
+            if (Math.random() < route.baseRisk) {
+                handleTravelEvent();
+            }
+            
+            showEvent(`⛵ Arrived in ${cities[destinationId].name} after ${travelTime} days`);
+            updateDisplay();
+            return true;
+        }
+
+        function checkSupplyRefresh() {
+            const daysSinceRefresh = gameState.day - gameState.lastSupplyRefreshDay;
+            
+            if (daysSinceRefresh >= 14) {
+                refreshCitySupplies();
+                gameState.lastSupplyRefreshDay = gameState.day;
+                return true;
+            }
+            return false;
+        }
+
+        function refreshCitySupplies() {
+            const refreshMessages = [];
+            
+            for (const [cityId, city] of Object.entries(cities)) {
+                const baseStocks = baseStockLevels[cityId];
+                
+                for (const [goodId, baseAmount] of Object.entries(baseStocks)) {
+                    const currentStock = city.stock[goodId] || 0;
+                    const isSpecialty = city.modifiers[goodId] && city.modifiers[goodId].aMod < 0;
+                    
+                    let newStock;
+                    if (isSpecialty) {
+                        const extraProduction = Math.floor(Math.random() * 7) + 2;
+                        newStock = baseAmount + extraProduction;
+                        refreshMessages.push(`📈 ${city.name}: ${goods[goodId].name} +${newStock - currentStock}`);
+                    } else {
+                        const variance = Math.floor(Math.random() * 7) - 2;
+                        newStock = Math.max(1, baseAmount + variance);
+                        
+                        if (newStock > currentStock) {
+                            refreshMessages.push(`📦 ${city.name}: ${goods[goodId].name} +${newStock - currentStock}`);
+                        }
+                    }
+                    
+                    city.stock[goodId] = Math.max(currentStock, newStock);
+                }
+            }
+            
+            gameState.stats.supplyRefreshes++;
+            
+            if (refreshMessages.length > 0) {
+                showEvent(`📦 SUPPLY CARAVANS ARRIVED! (Day ${gameState.day})\n${refreshMessages.slice(0, 6).join('\n')}`);
+            }
+        }
+
+        function handleTravelEvent() {
+            const events = [
+                '🏴‍☠️ Pirates demand tribute! Lost 50 coins.',
+                '⛈️ Storm delays journey! Crew morale decreased.',
+                '🐟 Favorable winds! Arrived ahead of schedule.',
+                '🗣️ Met trader with valuable information!'
+            ];
+            
+            const event = events[Math.floor(Math.random() * events.length)];
+            gameState.stats.eventsEncountered++;
+            
+            if (event.includes('Pirates')) {
+                gameState.money = gameState.money.subtract(50);
+            }
+            
+            showEvent(`🎲 EVENT: ${event}`);
+        }
+
+        function canAffordHouse() {
+            const housePrice = new SurrealNumber(10000, 0, 0);
+            return gameState.money.greaterThanOrEqual(housePrice) && !gameState.ownsHouse;
+        }
+
+        function purchaseHouse() {
+            if (gameState.currentCity !== 'carthage') {
+                showEvent('❌ Houses are only available in Carthage!');
+                return false;
+            }
+            
+            if (gameState.ownsHouse) {
+                showEvent('🏠 You already own a house in Carthage!');
+                return false;
+            }
+            
+            if (!canAffordHouse()) {
+                const housePrice = 10000;
+                const needed = housePrice - gameState.money.a;
+                showEvent(`❌ You need ${needed.toFixed(0)} more coins to buy a house!`);
+                return false;
+            }
+            
+            const housePrice = new SurrealNumber(10000, 0, 0);
+            gameState.money = gameState.money.subtract(housePrice);
+            gameState.ownsHouse = true;
+            gameState.gameCompleted = true;
+            
+            showVictoryScreen();
+            return true;
+        }
+
+        // UI Functions
+        function updateDisplay() {
+            updatePlayerStats();
+            updateCityView();
+            updateNewsFeeds();
+        }
+
+        function updatePlayerStats() {
+            document.getElementById('player-money').textContent = gameState.money.toString();
+            document.getElementById('current-day').textContent = gameState.day;
+            
+            const totalCargo = Object.values(gameState.cargo).reduce((sum, qty) => sum + qty, 0);
+            document.getElementById('cargo-capacity').textContent = `${totalCargo}/50`;
+            
+            document.getElementById('reputation').textContent = `Guild: ${gameState.reputation.merchant_guild}`;
+        }
+
+        function updateCityView() {
+            const city = cities[gameState.currentCity];
+            const mainContent = document.getElementById('main-content');
+            
+            let html = `
+                <div class="city-header">
+                    <h2 class="city-name">🏛️ ${city.name}</h2>
+                    <div class="city-info">
+                        <div class="info-item">
+                            <span>🗺️ Region: ${city.region}</span>
+                        </div>
+                        <div class="info-item">
+                            <span>📅 Day ${gameState.day}</span>
+                        </div>
+                        <div class="info-item">
+                            <span>☀️ Weather: Fair</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Victory condition
+            if (gameState.currentCity === 'carthage') {
+                if (gameState.ownsHouse) {
+                    html += '<div class="victory-banner">🏠 You own a magnificent house in Carthage!</div>';
+                } else if (canAffordHouse()) {
+                    html += '<div class="victory-banner">💎 VICTORY AVAILABLE: You can afford a house!</div>';
+                } else {
+                    const needed = 10000 - gameState.money.a;
+                    html += `<div class="news-ticker">🏠 Victory Goal: Buy a house for 10,000 coins (Need ${needed.toFixed(0)} more)</div>`;
+                }
+            }
+            
+            // Market section
+            html += `
+                <div class="market-section">
+                    <h3 class="section-title">📦 Market Prices</h3>
+                    <div class="market-grid">
+            `;
+            
+            for (const [goodId, stock] of Object.entries(city.stock)) {
+                if (goods[goodId]) {
+                    const buyPrice = getPrice(goodId, gameState.currentCity, true);
+                    const sellPrice = getPrice(goodId, gameState.currentCity, false);
+                    const playerHas = gameState.cargo[goodId] || 0;
+                    
+                    let status = [];
+                    if (!buyPrice.isLegal()) status.push('<span class="status-badge status-restricted">🚫 RESTRICTED</span>');
+                    if (stock < 5) status.push('<span class="status-badge status-low-stock">⚠️ Low Stock</span>');
+                    if (stock > 25) status.push('<span class="status-badge status-well-stocked">📈 Well Stocked</span>');
+                    if (playerHas > 10) status.push('<span class="status-badge status-high-spread">📦 You Hold Many</span>');
+                    
+                    html += `
+                        <div class="good-card">
+                            <div class="good-header">
+                                <span class="good-name">${goods[goodId].name}</span>
+                                <span class="good-stock">${stock} in stock</span>
+                            </div>
+                            <div class="price-display">
+                                <div class="price-item price-buy">
+                                    <div class="price-label">Buy Price</div>
+                                    <div class="price-value">
+                                        <div class="surreal-price">${buyPrice.toHTML()}</div>
+                                    </div>
+                                </div>
+                                <div class="price-item price-sell">
+                                    <div class="price-label">Sell Price</div>
+                                    <div class="price-value">
+                                        <div class="surreal-price">${sellPrice.toHTML()}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="good-actions">
+                                <button class="btn btn-danger" onclick="showTradeModal('${goodId}', true)" 
+                                    ${!buyPrice.isLegal() || stock === 0 ? 'disabled' : ''}>
+                                    🛒 Buy
+                                </button>
+                                <button class="btn btn-success" onclick="showTradeModal('${goodId}', false)"
+                                    ${playerHas === 0 ? 'disabled' : ''}>
+                                    💰 Sell
+                                </button>
+                            </div>
+                            <div class="status-indicators">
+                                ${status.join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += '</div></div>';
+            
+            // Actions panel
+            html += `
+                <div class="actions-panel">
+                    <button class="btn btn-primary" onclick="showTravel()">⛵ Travel</button>
+                    <button class="btn btn-secondary" onclick="showCargo()">📦 View Cargo</button>
+                    <button class="btn btn-secondary" onclick="showStats()">📊 Statistics</button>
+            `;
+            
+            if (gameState.currentCity === 'carthage' && !gameState.ownsHouse) {
+                if (canAffordHouse()) {
+                    html += '<button class="btn btn-primary" onclick="purchaseHouse()">🏠 🎉 BUY HOUSE - ACHIEVE VICTORY!</button>';
+                } else {
+                    html += '<button class="btn btn-secondary" disabled>🏠 Buy House (Not enough money)</button>';
+                }
+            }
+            
+            html += '</div>';
+            
+            mainContent.innerHTML = html;
+        }
+
+        function updateNewsFeeds() {
+            const daysUntilRefresh = 14 - (gameState.day - gameState.lastSupplyRefreshDay);
+            const newsFeed = document.getElementById('news-feed');
+            
+            let newsHtml = '';
+            if (daysUntilRefresh <= 3) {
+                newsHtml += `<div class="news-ticker">📦 Supply caravans arriving in ${daysUntilRefresh} days</div>`;
+            } else if (daysUntilRefresh === 14) {
+                newsHtml += '<div class="news-ticker">📦 Supply caravans just arrived!</div>';
+            }
+            
+            newsHtml += '<div class="news-ticker">📈 Higher stock = worse sell prices</div>';
+            newsHtml += '<div class="news-ticker">🏺 Specialty cities offer better rates</div>';
+            
+            newsFeed.innerHTML = newsHtml;
+        }
+
+        function showTradeModal(goodId, isBuying) {
+            const good = goods[goodId];
+            const city = cities[gameState.currentCity];
+            const price = getPrice(goodId, gameState.currentCity, isBuying);
+            
+            let maxQuantity;
+            if (isBuying) {
+                maxQuantity = city.stock[goodId] || 0;
+            } else {
+                maxQuantity = gameState.cargo[goodId] || 0;
+            }
+            
+            if (maxQuantity === 0) {
+                showEvent(`❌ No ${good.name} available for ${isBuying ? 'purchase' : 'sale'}!`);
+                return;
+            }
+            
+            const modal = document.getElementById('trade-modal');
+            const title = document.getElementById('trade-modal-title');
+            const content = document.getElementById('trade-modal-content');
+            
+            title.textContent = `${isBuying ? '🛒 Buy' : '💰 Sell'} ${good.name}`;
+            
+            content.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p><strong>Unit Price:</strong> <span class="surreal-price">${price.toHTML()}</span></p>
+                    <p><strong>Available:</strong> ${maxQuantity} units</p>
+                </div>
+                
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                    <span class="quantity-display" id="trade-quantity">1</span>
+                    <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <p><strong>Total Cost:</strong> <span id="total-cost">${price.toHTML()}</span></p>
+                </div>
+                
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="btn btn-success" onclick="confirmTrade('${goodId}', ${isBuying})">
+                        ✅ Confirm ${isBuying ? 'Purchase' : 'Sale'}
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeModal('trade-modal')">
+                        ❌ Cancel
+                    </button>
+                </div>
+            `;
+            
+            window.currentTradeData = {
+                goodId,
+                isBuying,
+                unitPrice: price,
+                maxQuantity,
+                currentQuantity: 1
+            };
+            
+            updateTradeCost();
+            modal.style.display = 'block';
+        }
+
+        function changeQuantity(delta) {
+            const data = window.currentTradeData;
+            const newQuantity = Math.max(1, Math.min(data.maxQuantity, data.currentQuantity + delta));
+            data.currentQuantity = newQuantity;
+            
+            document.getElementById('trade-quantity').textContent = newQuantity;
+            updateTradeCost();
+        }
+
+        function updateTradeCost() {
+            const data = window.currentTradeData;
+            const totalCost = data.unitPrice.multiply(data.currentQuantity);
+            document.getElementById('total-cost').innerHTML = totalCost.toHTML();
+        }
+
+        function confirmTrade(goodId, isBuying) {
+            const quantity = window.currentTradeData.currentQuantity;
+            executeTrade(goodId, quantity, isBuying);
+            closeModal('trade-modal');
+        }
+
+        function showTravel() {
+            const modal = document.getElementById('travel-modal');
+            const content = document.getElementById('travel-modal-content');
+            
+            const availableRoutes = routes.filter(r => r.from === gameState.currentCity);
+            
+            if (availableRoutes.length === 0) {
+                content.innerHTML = '<p>❌ No routes available from this city!</p>';
+                modal.style.display = 'block';
+                return;
+            }
+            
+            let html = '<div class="routes-grid">';
+            
+            for (const route of availableRoutes) {
+                const destCity = cities[route.to];
+                html += `
+                    <div class="route-card" onclick="travel('${route.to}'); closeModal('travel-modal');">
+                        <div class="route-header">
+                            <span class="route-destination">${destCity.name}</span>
+                            <span>${destCity.region}</span>
+                        </div>
+                        <div class="route-info">
+                            <span>⏱️ ${route.minDays}-${route.maxDays} days</span>
+                            <span>⚠️ Risk: ${(route.baseRisk * 100).toFixed(0)}%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            content.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        function showCargo() {
+            const modal = document.getElementById('cargo-modal');
+            const content = document.getElementById('cargo-modal-content');
+            
+            if (Object.keys(gameState.cargo).length === 0) {
+                content.innerHTML = '<p style="text-align: center;">📦 Cargo hold is empty!</p>';
+                modal.style.display = 'block';
+                return;
+            }
+            
+            const totalCargo = Object.values(gameState.cargo).reduce((sum, qty) => sum + qty, 0);
+            let totalValue = new SurrealNumber();
+            
+            let html = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h3>📦 CARGO (${totalCargo}/50)</h3>
+                </div>
+                <div class="cargo-grid">
+            `;
+            
+            for (const [goodId, quantity] of Object.entries(gameState.cargo)) {
+                const estValue = getPrice(goodId, gameState.currentCity, false).multiply(quantity);
+                totalValue = totalValue.add(estValue);
+                
+                html += `
+                    <div class="cargo-item">
+                        <div class="cargo-good">${goods[goodId].name}</div>
+                        <div class="cargo-quantity">${quantity} units</div>
+                        <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">
+                            Est. value: ${estValue.toString()}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                </div>
+                <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 10px;">
+                    <strong>Total estimated value: ${totalValue.toString()}</strong>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        function showStats() {
+            const modal = document.getElementById('stats-modal');
+            const content = document.getElementById('stats-modal-content');
+            
+            const currentWorth = calculateNetWorth();
+            const startMoney = new SurrealNumber(1240, -1, 0);
+            const profitLoss = currentWorth.subtract(startMoney);
+            
+            let html = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>💰 Financial Status</h4>
+                        <p>Starting: ${startMoney.toString()}</p>
+                        <p>Current: ${gameState.money.toString()}</p>
+                        <p>Net Worth: ${currentWorth.toString()}</p>
+                        <p>Profit/Loss: ${profitLoss.toString()}</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>📊 Trading Activity</h4>
+                        <p>Total Trades: ${gameState.stats.totalTrades}</p>
+                        <p>Spent: ${gameState.stats.totalSpent.toString()}</p>
+                        <p>Earned: ${gameState.stats.totalEarned.toString()}</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>🗺️ Travel Stats</h4>
+                        <p>Cities: ${gameState.stats.citiesVisited.size}/3</p>
+                        <p>Routes: ${gameState.stats.routesTraveled}</p>
+                        <p>Events: ${gameState.stats.eventsEncountered}</p>
+                        <p>Supply Refreshes: ${gameState.stats.supplyRefreshes}</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>🏠 Victory Progress</h4>
+                        ${gameState.ownsHouse ? 
+                            '<p>🎉 VICTORY ACHIEVED!</p>' :
+                            `<p>Progress: ${((currentWorth.a / 10000) * 100).toFixed(1)}%</p>
+                             <p>Needed: ${Math.max(0, 10000 - currentWorth.a).toFixed(0)} coins</p>`
+                        }
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>📦 Supply Information</h4>
+                    <p>Next resupply in ${14 - (gameState.day - gameState.lastSupplyRefreshDay)} days</p>
+                    <p>Cities restock specialty goods every 2 weeks</p>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        function calculateNetWorth() {
+            let totalWorth = new SurrealNumber(gameState.money.a, gameState.money.b, gameState.money.c);
+            
+            for (const [goodId, quantity] of Object.entries(gameState.cargo)) {
+                let avgPrice = new SurrealNumber();
+                let priceCount = 0;
+                
+                for (const cityId of Object.keys(cities)) {
+                    try {
+                        const sellPrice = getPrice(goodId, cityId, false);
+                        if (sellPrice.isLegal()) {
+                            avgPrice = avgPrice.add(sellPrice);
+                            priceCount++;
+                        }
+                    } catch (e) {
+                        // Skip if price calculation fails
+                    }
+                }
+                
+                if (priceCount > 0) {
+                    avgPrice.a /= priceCount;
+                    avgPrice.b /= priceCount;
+                    totalWorth = totalWorth.add(avgPrice.multiply(quantity));
+                }
+            }
+            
+            return totalWorth;
+        }
+
+        function showVictoryScreen() {
+            const modal = document.getElementById('stats-modal');
+            const content = document.getElementById('stats-modal-content');
+            
+            const finalWorth = calculateNetWorth().add(new SurrealNumber(10000, 0, 0));
+            const totalProfit = finalWorth.a - 1240;
+            
+            let score = 0;
+            let achievements = [];
+            
+            if (gameState.day <= 30) {
+                score += 3;
+                achievements.push('🏃‍♂️ Speed Merchant: Completed in 30 days or less (+3 ⭐)');
+            } else if (gameState.day <= 60) {
+                score += 2;
+                achievements.push('⏰ Efficient Trader: Completed in 60 days or less (+2 ⭐)');
+            } else {
+                score += 1;
+                achievements.push('🌊 Steady Progress: Took your time (+1 ⭐)');
+            }
+            
+            if (totalProfit > 15000) {
+                score += 3;
+                achievements.push('💎 Master Merchant: Over 15,000 profit (+3 ⭐)');
+            } else if (totalProfit > 10000) {
+                score += 2;
+                achievements.push('💰 Successful Trader: Over 10,000 profit (+2 ⭐)');
+            } else {
+                score += 1;
+                achievements.push('📈 Profitable Venture: Made a profit (+1 ⭐)');
+            }
+            
+            if (gameState.stats.citiesVisited.size === 3) {
+                score += 2;
+                achievements.push('🌍 Explorer: Visited all cities (+2 ⭐)');
+            }
+            
+            if (gameState.stats.eventsEncountered >= 5) {
+                score += 1;
+                achievements.push('⚔️ Adventurer: Survived many events (+1 ⭐)');
+            }
+            
+            let rating = '';
+            if (score >= 8) rating = '🎖️ LEGENDARY PHOENICIAN MERCHANT!';
+            else if (score >= 6) rating = '🥇 EXPERT TRADER!';
+            else if (score >= 4) rating = '🥈 SKILLED MERCHANT!';
+            else rating = '🥉 NOVICE TRADER - Keep practicing!';
+            
+            const visitedNames = Array.from(gameState.stats.citiesVisited).map(id => cities[id].name);
+            
+            let html = `
+                <div class="victory-screen">
+                    <h1 class="victory-title">🎉🏠 VICTORY ACHIEVED! 🏠🎉</h1>
+                    <p>You have purchased a magnificent house in Carthage!</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>⏰ COMPLETION TIME</h4>
+                        <p><strong>${gameState.day} days</strong></p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>💎 FINAL REPORT</h4>
+                        <p>Starting: 1,240 coins</p>
+                        <p>House: 10,000 coins</p>
+                        <p>Remaining: ${gameState.money.a.toFixed(0)} coins</p>
+                        <p>Total Profit: ${totalProfit.toFixed(0)} coins</p>
+                        <p>ROI: ${((totalProfit/1240)*100).toFixed(1)}%</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>📊 EFFICIENCY</h4>
+                        <p>Total Trades: ${gameState.stats.totalTrades}</p>
+                        ${gameState.stats.totalTrades > 0 ? `
+                            <p>Profit/Trade: ${(totalProfit/gameState.stats.totalTrades).toFixed(1)}</p>
+                            <p>Profit/Day: ${(totalProfit/gameState.day).toFixed(1)}</p>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4>🗺️ EXPLORATION</h4>
+                        <p>Cities: ${gameState.stats.citiesVisited.size}/3</p>
+                        <p>Visited: ${visitedNames.join(', ')}</p>
+                        <p>Routes: ${gameState.stats.routesTraveled}</p>
+                        <p>Adventures: ${gameState.stats.eventsEncountered}</p>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0; padding: 20px; background: rgba(212, 175, 55, 0.1); border-radius: 15px;">
+                    <h4>⭐ PERFORMANCE RATING</h4>
+                    ${achievements.map(ach => `<p>${ach}</p>`).join('')}
+                    <h3>🏆 FINAL SCORE: ${score}/10 ⭐</h3>
+                    <h3>${rating}</h3>
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <h3>🌊 Thank you for playing Surreal Phoenicians! 🌊</h3>
+                    <button class="btn btn-primary" onclick="location.reload()">🔄 Play Again</button>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        function showEvent(message) {
+            const eventPopup = document.createElement('div');
+            eventPopup.className = 'event-popup';
+            eventPopup.innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>📰 Event</strong>
+                </div>
+                <div>${message}</div>
+            `;
+            
+            document.body.appendChild(eventPopup);
+            
+            setTimeout(() => {
+                eventPopup.style.animation = 'slideInRight 0.5s ease reverse';
+                setTimeout(() => {
+                    document.body.removeChild(eventPopup);
+                }, 500);
+            }, 4000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function quitGame() {
+            if (confirm('Are you sure you want to quit the game?')) {
+                location.reload();
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDisplay();
+            showEvent('🌊 Welcome to Surreal Phoenicians! 🌊\nYou are a trader in the ancient Mediterranean...');
+        });
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModal = document.querySelector('.modal[style*="block"]');
+                if (openModal) {
+                    openModal.style.display = 'none';
+                }
+            }
+            
+            // Quick actions
+            if (!document.querySelector('.modal[style*="block"]')) {
+                switch(event.key) {
+                    case 't':
+                    case 'T':
+                        showTravel();
+                        break;
+                    case 'c':
+                    case 'C':
+                        showCargo();
+                        break;
+                    case 's':
+                    case 'S':
+                        showStats();
+                        break;
+                }
+            }
+        });
+
+        // Initialize game
+        window.gameState = gameState;
+        window.goods = goods;
+        window.cities = cities;
+    </script>
+</body>
+</html> 
